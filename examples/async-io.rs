@@ -1,10 +1,13 @@
+#![allow(dead_code, unused)]
 use anyhow::Result;
 use serde_yaml::Value;
 use tokio::{fs, try_join};
+use std::time::Instant;
 
 // 运行 cargo run --example async-io
 #[tokio::main]
 async fn main() -> Result<()> {
+    let start = Instant::now();
     // 这里的 fs 是 tokio 的 fs
     let f1 = fs::read_to_string("./Cargo.toml");
     let f2 = fs::read_to_string("./Cargo.lock");
@@ -23,7 +26,8 @@ async fn main() -> Result<()> {
 
     println!("{}", yaml1);
     println!("{}", yaml2);
-
+ 
+    println!("Time elapsed in async-io is: {:?}", start.elapsed());
     Ok(())
 }
 

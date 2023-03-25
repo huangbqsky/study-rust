@@ -1,10 +1,13 @@
 use anyhow::Result;
 use serde_yaml::Value;
 use std::fs;
+use std::time::Instant;
 
 // 运行  cargo run --example sync-io
 
 fn main() -> Result<()> {
+    let start = Instant::now();
+    
     // 读取 Cargo.toml，IO 操作 1
     let content1 = fs::read_to_string("./Cargo.toml")?;
     // 读取 Cargo.lock，IO 操作 2
@@ -22,6 +25,7 @@ fn main() -> Result<()> {
     println!("{}", yaml1);
     println!("{}", yaml2);
 
+    println!("Time elapsed in sync-io is: {:?}", start.elapsed());
     Ok(())
 }
 

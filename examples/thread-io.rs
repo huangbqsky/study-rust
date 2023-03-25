@@ -1,5 +1,6 @@
 use anyhow::{anyhow, Result};
 use serde_yaml::Value;
+use std::time::Instant;
 
 use std::{
     fs,
@@ -18,6 +19,8 @@ impl<T> MyJoinHandle<T> {
 
 // 运行 cargo run --example thread-io
 fn main() -> Result<()> {
+    let start = Instant::now();
+
     let t1 = thread_read("./Cargo.toml");
     let t2 = thread_read("./Cargo.lock");
 
@@ -40,6 +43,7 @@ fn main() -> Result<()> {
     println!("{}", yaml1);
     println!("{}", yaml2);
 
+    println!("Time elapsed in thread-io is: {:?}", start.elapsed());
     Ok(())
 }
 
