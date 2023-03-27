@@ -24,6 +24,7 @@ crossbeam = {version = "0.8.2"}
 crossbeam-channel= "0.5.6"
 
 tokio = { version = "1", features = ["full"] }
+futures = "0.3.25"
 
 threadpool = "1.1.1"
 image = "0.24.5"
