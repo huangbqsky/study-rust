@@ -1,4 +1,4 @@
-
+#![allow(dead_code)]
 use futures;
 use std::{
     future::Future,
