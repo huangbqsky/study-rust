@@ -34,7 +34,7 @@ impl SimpleSocket for Socket {
 
     fn read_buf(&self) -> Vec<u8> {
         let mut v = Vec::new();
-        v.push(self.bytesget); // 模拟 read
+        v.push(12); // 模拟 read
         v
     }
 }
