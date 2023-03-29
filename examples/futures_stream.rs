@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use std::pin::Pin;
 use futures::Stream;
 use futures::io;
@@ -65,32 +67,6 @@ async fn sum_with_try_next(
     Ok(sum)
 }
 
-// Stream 并发：stream.try_for_each_concurrent()
-async fn jump_around (
-    stream: Pin<&mut dyn Stream<Item = Result<i32, io::Error>>>,
-) -> Result<(), io::Error> {
-    use futures::stream::TryStreamExt; // 引入 `try_for_each_concurrent`
-    const MAX_CONCURRENT_JUMPERS: usize = 100;
-
-    stream
-        .try_for_each_concurrent(MAX_CONCURRENT_JUMPERS, |num| async move {
-            jump_n_times(num).await?;
-            report_n_jumps(num).await?;
-            Ok(())
-        })
-        .await?;
-
-    Ok(())
-}
-
-async fn jump_n_times(num: i32)-> Result<(), io::Error> {
-    println!("jump_n_times :{}", num+1);
-    Ok(())
-}
-async fn report_n_jumps(num: i32)-> Result<(), io::Error>{
-    println!("report_n_jumps : {}", num);
-    Ok(()) 
-}
 
 // 使用 repeat_with 创建 stream，无法控制何时结束
 fn fib() -> impl Stream<Item = i32> {
