@@ -15,7 +15,7 @@ async fn report_n_jumps(num: i32)-> Result<(), io::Error>{
 }
 
 
-// Stream 并发： 要求是被 Pin 包裹的 trait 对象流，
+// Stream 并发: 参数要求是被 Pin 包裹的 trait 对象约束的 Stream，
 async fn jump_around_pin_dyn(stream: Pin<&mut dyn Stream<Item = Result<i32, io::Error>>>) -> Result<(), io::Error> {
     use futures::stream::TryStreamExt; // 引入 `try_for_each_concurrent`
     stream.try_for_each_concurrent(100, |num| async move {
@@ -26,7 +26,7 @@ async fn jump_around_pin_dyn(stream: Pin<&mut dyn Stream<Item = Result<i32, io::
 
     Ok(())
 }
-// Stream 并发 : 参数是 trait bounds 约束流， 所以需要 pin_mut宏 pin 住
+// Stream 并发: 参数是 trait bounds 约束 的Stream， 所以需要 pin_mut宏 pin 住
 async fn jump_around_trait_bound(stream: impl Stream<Item= Result<i32, io::Error>>) -> Result<(), io::Error> {
     use futures::stream::TryStreamExt; // 引入 `try_for_each_concurrent`
     // 不要忘记在迭代流之前固定（pin）它
