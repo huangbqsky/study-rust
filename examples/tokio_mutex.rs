@@ -79,7 +79,7 @@ async fn cross_await(){
 
 
 /**
- * 继续使用标准库的Mutex： 这种方案的主要思想是让子任务和父任务不要出现不安全的数据交叉
+ * 继续使用标准库的Mutex: 
  *方案1. 可以在子任务await之前，把所有未实现Send的数据都drop掉，保证子任务无法引用父任务中的任何非Send数据。
  */
 async fn add_drop_std_mutex(mutex: &std::sync::Mutex<u64>) {
@@ -106,6 +106,8 @@ async fn add_std_mutex(mutex: &std::sync::Mutex<u64>) -> u64 {
  * 可以继续使用标准库的Mutex，但需要做一些调整:
  * 方案1. 可以在子任务await之前，把所有未实现Send的数据都drop掉，保证子任务无法引用父任务中的任何非Send数据。
  * 方案2. 将子任务sleep().await从这个函数中移走。
+ * 
+ * 这种方案的主要思想是让子任务和父任务不要出现不安全的数据交叉
  * 
  */
 async fn cross_await_std_mutex(){
