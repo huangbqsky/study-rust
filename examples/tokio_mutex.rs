@@ -1,4 +1,5 @@
 use std::sync::Arc;
+#[allow(unused_imports, unused)]
 use tokio::{self, sync::{self, Mutex}, runtime::Runtime, time::{self, Duration}};
 
 fn main() {
@@ -44,10 +45,11 @@ async fn std_mutex(){
 }
 
 
-async fn add_1(mutex: &Mutex<u64>) {
+async fn add_1(mutex: &Mutex<u64>) -> u64{
     let mut lock = mutex.lock().await;
     *lock += 1;
     time::sleep(Duration::from_millis(*lock)).await;
+    *lock
 }
 
 /**
@@ -59,12 +61,14 @@ async fn add_1(mutex: &Mutex<u64>) {
  * 这是因为子任务中可能会引用父任务中的数据。
  */
 async fn cross_await(){
+    println!("================cross_await================");
     let mutex = Arc::new(Mutex::new(0));
 
     for i in 0..10 {
         let lock = mutex.clone();
         tokio::spawn(async move {
-            add_1(&lock).await;
+            let data = add_1(&lock).await;
+            println!("task: {}, data: {}", i, data);
         });
     }
 
