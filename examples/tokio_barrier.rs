@@ -1,3 +1,5 @@
+///! Barrier是一种让多个并发任务在某种程度上保持进度同步的手段。
+/// 让并发任务的进度按批次进行同步，一批任务都同步后才放行一批，否则一直等待
 use std::sync::Arc;
 use tokio::runtime::Runtime;
 use tokio::sync::Barrier;
@@ -5,7 +7,6 @@ use tokio::{
     self,
     time::{self, Duration},
 };
-
 fn main() {
     let rt = Runtime::new().unwrap();
     rt.block_on(barrier_vec());
