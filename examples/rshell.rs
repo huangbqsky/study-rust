@@ -1,6 +1,10 @@
 /**
  * 【译】使用 Rust 构建你自己的 Shell
  *  https://www.cnblogs.com/ishenghuo/p/12550142.html
+ * 
+ * shell项目1: https://github.com/JoshMcguigan/bubble-shell
+ * shell项目2: https://github.com/psinghal20/rush
+ * 
  */
 use std::{
     env,
@@ -28,8 +32,9 @@ fn main() {
             let args = parts;
 
             match command {
-                "exit" | "quit"=> return, // 退出 shell
-                "cd" => { // cd 命令
+                "exit" | "quit"=> return, // shell内建功能： 退出shell命令
+                "cd" => { // shell内建功能： cd命令
+                    // 如果没有提供路径参数，则默认 '/' 路径
                     let new_dir = args.peekable().peek().map_or("/", |x| *x);
                     let root = Path::new(new_dir);
                     if let Err(e) = env::set_current_dir(&root) {
@@ -39,6 +44,8 @@ fn main() {
                     previous_command = None;
                 }
                 command => {
+                    // 管道符:
+                    // 可以使用 | 字符告诉 shell 将第一个命令的结果输出重定向到第二个命令的输入。例如，运行 ls | grep Cargo
                     let stdin = previous_command.map_or(Stdio::inherit(), |output: Child| {
                         Stdio::from(output.stdout.unwrap())
                     });
@@ -76,7 +83,7 @@ fn main() {
 
         if let Some(mut final_command) = previous_command {
             // block until the final command has finished
-            // 阻塞一直到命令执行完成
+            // 阻塞一直到命令执行完成find . -type d -exec cd {} \;
             final_command.wait().unwrap();
         }
     }
