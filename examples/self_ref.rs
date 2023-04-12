@@ -33,4 +33,42 @@ fn main() {
 
     // 2.无法移动：不能移动 self_ref ，因为它已经被借用
     // move_and_print(self_ref); // error：cannot move out of `self_ref` because it is borrowed
+
+
+    // 裸指针实现的自引用
+    let mut self_ref = SelfRefData::new(Data { data: 1 });
+    self_ref.init();
+    self_ref.print_info();
+}
+
+pub struct Data {
+    data: usize,
+}
+// 自引用结构体（裸指针实现）
+pub struct SelfRefData {
+    data: Data,
+    data_ref: *const Data, // 裸指针实现
+}
+
+impl SelfRefData {
+    fn new(data: Data) -> Self {
+        Self {
+            data,
+            data_ref: std::ptr::null(),
+        }
+    }
+
+    fn init(&mut self) {
+        self.data_ref = &self.data;
+    }
+
+    fn print_info(&self) {
+        println!(
+            "data address: {:p} content: {}，data_ref：{:p} content: {}",
+            &self.data,
+            self.data.data,
+            self.data_ref,
+            unsafe { &*self.data_ref }.data
+        );
+    }
 }
