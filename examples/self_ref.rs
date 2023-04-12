@@ -1,5 +1,5 @@
 #![allow(dead_code)]
-use std::ops::Deref;
+use std::{ops::{Deref, DerefMut}, mem};
 
 #[derive(Debug)]
 // 自引用结构体
@@ -21,6 +21,7 @@ fn move_and_print<'a>(self_ref: SelfRefStr<'a>) { // 不能移动 self_ref
 }
 
 fn main() {
+    println!("{}", "-".repeat(100));
     let str = "Hello".to_string();
     let mut self_ref = SelfRefStr { str, str_ref: None };
     self_ref.str_ref = Some(self_ref.str.deref()); // self_ref是可变借用，并且str_ref字段指向的值是就是str字段
@@ -47,12 +48,18 @@ fn main() {
     // self_ref.print_info();
 
     // 在栈上内存移动非常普遍，test方法返回了SelfRef，此时就移动了SelfRef
+    println!("{}", "-".repeat(100));
     let self_ref = test();
     self_ref.print_info();
 
     // 在堆上移动自引用结构
+    println!("{}", "-".repeat(100));
     let self_ref = test_box();
     self_ref.print_info();
+
+    // mem::swap交换了2个在堆上的自引用结构的内存
+    println!("{}", "-".repeat(100));
+    mem_swap ();
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -80,6 +87,23 @@ fn test_box() -> Box<SelfRef> {
     self_ref.init();
     self_ref.print_info();
     self_ref
+}
+// mem::swap交换了2个在堆上的自引用结构的内存，自然发生了移动
+// 但是这个时候出现的问题不是悬空指针，而是数据出现了错乱，指向的不在是自己结构的data字段
+fn mem_swap (){
+    let mut self_ref = Box::new(SelfRef::new(Data { data: 1 }));
+    self_ref.init();
+    let mut self_ref2 = Box::new(SelfRef::new(Data { data: 2 }));
+    self_ref2.init();
+
+    self_ref.print_info(); // 交换前信息
+    self_ref2.print_info(); // 交换前信息
+
+    // swap交换内存
+    mem::swap(self_ref.deref_mut(),self_ref2.deref_mut());
+
+    self_ref.print_info(); // 交换后信息
+    self_ref2.print_info(); // 交换后信息
 }
 
 impl SelfRef {
