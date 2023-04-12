@@ -3,18 +3,18 @@ use std::ops::Deref;
 
 #[derive(Debug)]
 // 自引用结构体
-pub struct SelfRef<'a> {
+pub struct SelfRefStr<'a> {
     str: String,
     str_ref: Option<&'a str>,
 }
 
-impl SelfRef<'_> {
+impl SelfRefStr<'_> {
     fn change_str(&mut self) { // 可变借用 self_ref
 
     }
 }
 
-fn move_and_print<'a>(self_ref: SelfRef<'a>) { // 不能移动 self_ref
+fn move_and_print<'a>(self_ref: SelfRefStr<'a>) { // 不能移动 self_ref
     println!("{:?}", self_ref);
     println!("{:p}", self_ref.str.deref());
     println!("{:p}", self_ref.str_ref.unwrap());
@@ -22,7 +22,7 @@ fn move_and_print<'a>(self_ref: SelfRef<'a>) { // 不能移动 self_ref
 
 fn main() {
     let str = "Hello".to_string();
-    let mut self_ref = SelfRef { str, str_ref: None };
+    let mut self_ref = SelfRefStr { str, str_ref: None };
     self_ref.str_ref = Some(self_ref.str.deref()); // self_ref是可变借用，并且str_ref字段指向的值是就是str字段
     // println!("{:?}", self_ref);
     // println!("{:p}", self_ref.str.deref()); // str解引用 ，比如：0x12be06c90
@@ -49,6 +49,10 @@ fn main() {
     // 在栈上内存移动非常普遍，test方法返回了SelfRef，此时就移动了SelfRef
     let self_ref = test();
     self_ref.print_info();
+
+    // 在堆上移动自引用结构
+    let self_ref = test_box();
+    self_ref.print_info();
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -57,20 +61,28 @@ pub struct Data {
 }
 // 自引用结构体（裸指针实现）
 #[derive(Clone, Copy, Debug)]
-pub struct SelfRefData {
+pub struct SelfRef {
     data: Data,
     data_ref: *const Data, // 裸指针实现
 }
 
 // 在栈上内存移动非常普遍，下面定义了test方法，返回了SelfRef，此时就移动了SelfRef
-fn test() -> SelfRefData {
-    let mut self_ref = SelfRefData::new(Data { data: 1 });
+fn test() -> SelfRef {
+    let mut self_ref = SelfRef::new(Data { data: 1 });
     self_ref.init();
     self_ref.print_info();
     self_ref
 }
 
-impl SelfRefData {
+// 自引用结构在堆上分配了，移动Box<SelfRef>只会移动栈上的数据，堆上的数据并没有发生移动
+fn test_box() -> Box<SelfRef> {
+    let mut self_ref = Box::new(SelfRef::new(Data { data: 1 }));
+    self_ref.init();
+    self_ref.print_info();
+    self_ref
+}
+
+impl SelfRef {
     fn new(data: Data) -> Self {
         Self {
             data,
