@@ -54,6 +54,7 @@ impl codec::Encoder<RstResp> for RstRespCodec {
     fn encode(&mut self, item: RstResp, dst: &mut BytesMut) -> Result<(), Self::Error> {
         let data = bincode::serialize(&item)?;
         let data = data.as_slice();
+        println!("bincode data: {:?}, len = {:?}", dst, data);
 
         // 要传输的实际数据的长度
         let data_len = data.len();
