@@ -1,15 +1,15 @@
-use bytes::{BufMut, BytesMut};
 use futures_util::stream::{SplitSink, SplitStream};
 use futures_util::{SinkExt, StreamExt};
-use log::{debug, error};
-use serde::{Deserialize, Serialize};
-use tokio::{
-    net::{TcpListener, TcpStream},
-    sync::mpsc,
-};
+
+use tokio::sync::mpsc;
+use tokio::net::{TcpListener, TcpStream};
 use tokio_util::codec::{self, Framed};
 
+use serde::{Deserialize, Serialize};
+use bytes::{BufMut, BytesMut};
+use log::{debug, error};
 
+// 类型别名
 type RstRespFramedStream = SplitStream<Framed<TcpStream, RstRespCodec>>;
 type RstRespFramedSink = SplitSink<Framed<TcpStream, RstRespCodec>, RstResp>;
 
@@ -33,8 +33,13 @@ pub enum RstResp {
     Response(Response),
 }
 
-/// 自己定义一个Codec，
-/// 并实现Encoder和Decoder，完成 RstResp => &[u8] => RstResp 之间的转换
+/// 自己定义一个Codec，并实现codec的Decoder和Encoder，完成 RstResp => &[u8] => RstResp 之间的转换
+/// 1. Decoder：将二进制字节数据帧转换为指定的Rust类型
+/// 2. Encoder：将指定的Rust类型转换为二进制字节数据帧
+/// 
+/// 一个简单、通用且常用的二进制通信协议格式是：| data_len | data |，即：
+/// 1. 在编码时(Encoder)，先计算待发送的二进制数据data的长度，并将长度大小放在帧首，实际数据放在长度的后面，这是一个完整的帧
+/// 2. 在解码时(Decoder)，先读取长度大小，根据读取的长度大小再先后读取指定数量的字节，从而读取一个完整的帧，再将其转换为指定的数据类型
 pub struct RstRespCodec;
 impl RstRespCodec {
     /// 最多传送1G数据
@@ -69,7 +74,7 @@ impl codec::Encoder<RstResp> for RstRespCodec {
 
         // 再将实际数据放入帧尾
         dst.extend_from_slice(data);
-        println!("encode RstResp {:?}",dst);
+        println!("encode RstResp {:?}", dst);
         Ok(())
     }
 }
@@ -154,8 +159,8 @@ async fn process_client(client_stream: TcpStream) {
     };
 }
 
+// 负责读的
 async fn read_from_client(mut frame_reader: RstRespFramedStream, msg_tx: mpsc::Sender<RstResp>) {
-    // 负责读的
     loop {
         match frame_reader.next().await {
             None => {
@@ -185,8 +190,9 @@ async fn read_from_client(mut frame_reader: RstRespFramedStream, msg_tx: mpsc::S
     }
 }
 
+// 负责写的
 async fn write_to_client(mut frame_writer: RstRespFramedSink, mut msg_rx: mpsc::Receiver<RstResp>) {
-    // // 负责写的
+ 
     // let resp = RstResp::Response(resp);
     // if frame_writer.send(resp).await.is_err() {
     //     error!("write failed");
