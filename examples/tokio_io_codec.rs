@@ -125,7 +125,8 @@ impl codec::Decoder for RstRespCodec {
 #[tokio::main]
 async fn main() {
     let server = TcpListener::bind("127.0.0.1:8888").await.unwrap();
-    while let Ok((client_stream, _client_addr)) = server.accept().await {
+    while let Ok((client_stream, client_addr)) = server.accept().await {
+        println!("accept client: {}", client_addr);
         tokio::spawn(async move {
             process_client(client_stream).await;
         });
@@ -198,8 +199,8 @@ async fn write_to_client(mut frame_writer: RstRespFramedSink, mut msg_rx: mpsc::
     //     error!("write failed");
     // }
 
-    while let Some(str) = msg_rx.recv().await {
-        if frame_writer.send(str).await.is_err() {
+    while let Some(resp) = msg_rx.recv().await {
+        if frame_writer.send(resp).await.is_err() {
             eprintln!("write to client failed");
             break;
         }

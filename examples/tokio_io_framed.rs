@@ -12,7 +12,8 @@ type LineFramedSink = SplitSink<Framed<TcpStream, LinesCodec>, String>;
 #[tokio::main]
 async fn main() {
     let server = TcpListener::bind("127.0.0.1:8888").await.unwrap();
-    while let Ok((client_stream, _client_addr)) = server.accept().await {
+    while let Ok((client_stream, client_addr)) = server.accept().await {
+        println!("accept client: {}", client_addr);
         tokio::spawn(async move {
             process_client(client_stream).await;
         });
