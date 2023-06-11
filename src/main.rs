@@ -27,7 +27,8 @@ mod sort;
 mod gzip;
 mod digest;
 mod claps;
-pub mod stack;
+mod stack;
+mod string;
 
 #[derive(Debug, Default)]
 enum Kind {
@@ -38,29 +39,29 @@ enum Kind {
 }
 
 fn main() {
-    let order1 = Kind::default();
-    println!("{:?}", order1);
+    // let order1 = Kind::default();
+    // println!("{:?}", order1);
     
-    size_of::show_size_fn();
-    println!("{}", "-".repeat(64));
-    vtable::vtest();
-    println!("{}", "-".repeat(64));
-    buffer::main_run();
-    println!("{}", "-".repeat(64));
-    format::main_fn();
-    println!("{}", "-".repeat(64));
-    tuple::main();
-    array::main();
-    structure::main();
-    enumeration::main();
-    types::main();
+    // size_of::show_size_fn();
+    // println!("{}", "-".repeat(64));
+    // vtable::vtest();
+    // println!("{}", "-".repeat(64));
+    // buffer::main_run();
+    // println!("{}", "-".repeat(64));
+    // format::main_fn();
+    // println!("{}", "-".repeat(64));
+    // tuple::main();
+    // array::main();
+    // structure::main();
+    // enumeration::main();
+    // types::main();
     // iter::main();
-    matchs::main();
-    closure::main();
-    traits::main();
-    phantom::main();
-    errors::main();
-    boxed::main();
+    // matchs::main();
+    // closure::main();
+    // traits::main();
+    // phantom::main();
+    // errors::main();
+    // boxed::main();
     // paths::main();
     // files::main();
     // processes::main();
@@ -70,6 +71,8 @@ fn main() {
     // gzip::main_run();
     // digest::main_run();
     // claps::main_run();
+    
+    string::main();
 
 }
 
