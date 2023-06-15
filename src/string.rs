@@ -46,12 +46,12 @@ pub fn main() {
     dbg!(string_pop);
 
     // 2. remove —— 删除并返回字符串中指定位置的字符， 该方法是直接操作原来的字符串。但是存在返回值，其返回值是删除位置的字符串
-    // remove() 方法是按照字节来处理字符串的，如果参数所给的位置不是合法的字符边界，则会发生错误。
     let mut string_remove = String::from("测试remove方法");
     println!(
         "string_remove 占 {} 个字节",
         std::mem::size_of_val(string_remove.as_str())
     );
+    // remove() 方法是按照字节byte来处理字符串的，而String保存是utf-8字符，是变宽的，如果参数所给的位置不是合法的字符边界，则会发生错误。
     // 删除第一个汉字
     string_remove.remove(0);
     // 下面代码会发生错误
