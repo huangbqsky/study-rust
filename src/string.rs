@@ -124,7 +124,7 @@ pub fn main() {
         println!("{}", b);
       }
 
-      ///总结：
+      // 字符串总结：
       // 1。字符串切片索引要注意，必须落在字符边界
       // 2. push，insert，replace_range， pop，remove，truncate，clear 修改原有字符串，即字符串必须是 mut
       // 3. replace，replacen，catenate, format!返回新的字符串，不用 mut。
