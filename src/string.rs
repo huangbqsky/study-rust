@@ -21,10 +21,20 @@ pub fn main() {
     }
 
     // push 追加字符和 push_str字符串
-    let mut s = String::from("Hello");
+    let mut s = String::from("HelloRust");
     s.push('.');        // push()可追加单个char字符类型
     s.push_str("com");  // push_str()可追加&str类型的字符串
-    println!("{}", s);  // 输出：junmajinlong.com
+    println!("{}", s);  // HelloRust.com
+
+    // str和 &str
+    let s = String::from("HelloRust");
+    // 自动推导数据类型为 &str
+    // s[0..5]的类型为 str
+    // &s[0..5]的类型为 &str
+    let s_str = &s[0..5];  // 等价于 &(s[0..5])而不是 (&s)[0..5]
+    // 现在 s_str 通过胖指针引用了源 String 字符串中的局部数据
+    println!("{}", s_str);  // Hello
+
 
     // 替换 replace 该方法可适用于 String 和 &str 类型， 返回一个新的字符串
     let string_replace = String::from("I like rust. Learning rust is my favorite!");
