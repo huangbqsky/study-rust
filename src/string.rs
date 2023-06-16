@@ -20,6 +20,12 @@ pub fn main() {
 
     }
 
+    // push 追加字符和 push_str字符串
+    let mut s = String::from("Hello");
+    s.push('.');        // push()可追加单个char字符类型
+    s.push_str("com");  // push_str()可追加&str类型的字符串
+    println!("{}", s);  // 输出：junmajinlong.com
+
     // 替换 replace 该方法可适用于 String 和 &str 类型， 返回一个新的字符串
     let string_replace = String::from("I like rust. Learning rust is my favorite!");
     let new_string_replace = string_replace.replace("rust", "RUST");
