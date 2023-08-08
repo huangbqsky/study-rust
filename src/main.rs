@@ -72,7 +72,7 @@ fn main() {
     // digest::main_run();
     // claps::main_run();
     
-    string::main();
+    // string::main();
 
 }
 
