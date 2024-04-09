@@ -1,3 +1,4 @@
+#![allow(dead_code, unused_imports,dropping_copy_types)]
 use std::{fmt, slice};
 
 // 注意这里，我们实现了 Copy，这是因为 *mut u8/usize 都支持 Copy
@@ -56,6 +57,7 @@ pub fn main_run() {
     // buf 还能用
     println!("buf: {:?}", buf);
 }
+
 
 fn use_buffer(buf: RawBuffer) {
     println!("buf to die: {:?}", buf);

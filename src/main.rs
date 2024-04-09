@@ -29,6 +29,7 @@ mod digest;
 mod claps;
 mod stack;
 mod string;
+mod sort_zh;
 
 #[derive(Debug, Default)]
 enum Kind {
@@ -73,6 +74,8 @@ fn main() {
     // claps::main_run();
     
     // string::main();
+
+    sort_zh::sort_zh_test();// 测试中文排序
 
 }
 
